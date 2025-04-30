@@ -43,7 +43,7 @@
 
 // #pragma once
 
-#include QMK_KEYBOARD_H
+// #include QMK_KEYBOARD_H
 
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {

@@ -1,6 +1,7 @@
 {
-    "userspace_version": "1.0",
+    "userspace_version": "1.1",
     "build_targets": [
-        ["sofle_choc", "miryoku"]
+        ["sofle_choc", "miryoku"],
+        ["sofle_choc", "owemeone"]
     ]
 }
