@@ -86,3 +86,8 @@
 #undef ENABLE_RGB_MATRIX_RIVERFLOW
 #undef ENABLE_RGB_MATRIX_EFFECT_MAX
 #endif
+
+#ifdef RAW_ENABLE
+#define RAW_USAGE_PAGE 0xFF99
+#define RAW_USAGE_ID 0x4
+#endif

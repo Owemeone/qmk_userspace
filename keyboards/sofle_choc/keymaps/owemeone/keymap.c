@@ -15,12 +15,18 @@
  */
 // #include <stdint.h>
 #pragma once
+#include <stdint.h>
+#include "raw_hid.h"
 #include QMK_KEYBOARD_H
 
 enum choc_layers {
     _DEFAULTS = 0,
     _QWERTY = 0,
     _OLED
+};
+
+enum my_keycodes {
+    TM_BUTN = SAFE_RANGE
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -51,14 +57,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, _______, _______, _______, _______, QK_BOOT,                        _______, _______, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______,                        _______, _______, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______,                        _______, _______, _______, _______, _______, _______,
-    _______, _______, _______, _______, _______, QK_RBT,  _______,      RM_TOGG, _______, _______, _______, _______,  _______, _______,
+    TM_BUTN, TM_BUTN, _______, _______, _______, QK_RBT,  _______,      RM_TOGG, _______, _______, _______, _______,  _______, _______,
                       _______, _______, _______, _______, _______,      _______, _______, _______, _______, _______
 )
 };
 
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
-    [_QWERTY] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU), ENCODER_CCW_CW(KC_MPRV, KC_MNXT) },
+    [_QWERTY] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU), ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
     [_OLED] = { ENCODER_CCW_CW(RM_NEXT, RM_PREV), ENCODER_CCW_CW(KC_MPRV, KC_MNXT) }
 };
 #endif
@@ -106,6 +112,7 @@ bool oled_task_user(void) {
             // Or use the write_ln shortcut over adding '\n' to the end of your string
             oled_write_ln_P(PSTR("Undefined"), false);
     }
+    #ifdef RGB_MATRIX_ENABLE
     switch (rgb_matrix_get_mode()) {
         case 1:
             oled_write_ln_P(PSTR("Solid Color\n"), false);
@@ -243,6 +250,7 @@ bool oled_task_user(void) {
             // Or use the write_ln shortcut over adding '\n' to the end of your string
             oled_write_ln_P(PSTR("Undefined\n"), false);
     }
+    #endif
     oled_write_P(PSTR("OS: "), false);
     switch (detected_host_os()) {
         case OS_UNSURE:
@@ -271,4 +279,31 @@ bool oled_task_user(void) {
     return false;
 }
 
+#endif
+
+#ifdef RAW_ENABLE
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    #ifdef CONSOLE_ENABLE
+    uprintf("KL: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
+    #endif
+    switch (keycode) {
+      case TM_BUTN:
+        print("In raw button pressed");
+        if (record->event.pressed) {
+            printf("In pressed");
+            // Do something when pressed
+            uint8_t report[32];
+            memset(report, 0, 32);
+
+            report[0] = 0x9B;
+            raw_hid_send(report, 32);
+            printf("Sent raw hid");
+        } else {
+          // Do something else when release
+        }
+        return false; // Skip all further processing of this key
+      default:
+        return true; // Process all other keycodes normally
+    }
+  }
 #endif
