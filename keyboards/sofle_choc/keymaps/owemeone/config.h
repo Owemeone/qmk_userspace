@@ -15,9 +15,9 @@
  */
 #pragma once
 
-#define CUSTOM_FONT
+// #define CUSTOM_FONT
 
-#define LAYER_STATE_8BIT
+// #define LAYER_STATE_8BIT
 
 // Enabling this option changes the startup behavior to listen for an
 // active USB communication to delegate which part is master and which
@@ -26,7 +26,8 @@
 // is the slave.
 //
 // I've found this helps with some ProMicros where the slave does not boot
-#define SPLIT_USB_DETECT
+// #define SPLIT_USB_DETECT
+#define MASTER_LEFT
 
 #ifdef RGB_MATRIX_ENABLE
 #define RGB_MATRIX_SLEEP     // turn off effects when suspended
@@ -90,4 +91,8 @@
 #ifdef RAW_ENABLE
 #define RAW_USAGE_PAGE 0xFF99
 #define RAW_USAGE_ID 0x4
+#endif
+
+#ifdef OLED_ENABLE
+#define OLED_FONT_H "keyboards/crkbd/lib/glcdfont.c"
 #endif
